@@ -26,16 +26,7 @@
 //++
 
 import { describe, expect, test } from "vitest";
-import * as Y from "yjs";
-import { createEditor } from "../../src/extensions/openProjectApi";
-
-async function storedMarkdown(blocks:unknown[]) {
-  const editor = createEditor();
-  const fragment = new Y.Doc().getXmlFragment("document-store");
-  // @ts-expect-error BlockNote types are complicated
-  editor.blocksToYXmlFragment(blocks, fragment);
-  return editor.blocksToMarkdownLossy(editor.yXmlFragmentToBlocks(fragment));
-}
+import { storedMarkdown } from "../helpers/storedMarkdown";
 
 describe("math", () => {
   test("stores a math block as a $$ block", async () => {
