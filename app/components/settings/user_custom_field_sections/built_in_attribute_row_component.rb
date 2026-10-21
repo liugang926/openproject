@@ -34,15 +34,23 @@ module Settings
       include OpPrimer::ComponentHelpers
       include OpTurbo::Streamable
       include SortableLists::MoveMenu
+      include Settings::UserCustomFieldSections::MoveBetweenSections
 
-      def initialize(section:, attribute_key:)
+      def initialize(section:, attribute_key:, other_sections:)
         super()
         @section = section
         @attribute_key = attribute_key
+        @other_sections = other_sections
       end
 
       def attribute_label
         User.human_attribute_name(@attribute_key)
+      end
+
+      private
+
+      def move_to_section_submenu(menu)
+        with_move_to_section_submenu(menu, key: @attribute_key, other_sections: @other_sections)
       end
     end
   end
