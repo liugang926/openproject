@@ -61,10 +61,12 @@ RSpec.describe "OS-synced theme on first paint", :js do
   it "resolves a dark OS asking for more contrast to dark high contrast" do
     login_as user
     emulate_media(prefers_color_scheme: "dark", prefers_contrast: "more")
-    visit home_path
 
-    expect(page).to have_css("body > script", text: "prefers-contrast", visible: :all)
-    expect(page).to have_css("body[data-color-mode='dark'][data-dark-theme='dark_high_contrast']")
+    without_external_scripts do
+      visit home_path
+
+      expect(page).to have_css("body[data-color-mode='dark'][data-dark-theme='dark_high_contrast']")
+    end
   end
 
   it "applies the forced dark contrast preference from the inline script alone" do
