@@ -26,6 +26,7 @@ See COPYRIGHT and LICENSE files for more details.
 
 ++#%>
 <% if User.current.pref.sync_with_os_theme? %>
+  <%# Mirrors AutoThemeSwitcher#applySystemTheme; both must stamp the same attributes. %>
   <%= nonced_javascript_tag do %>
     (() => {
       const body = document.body;

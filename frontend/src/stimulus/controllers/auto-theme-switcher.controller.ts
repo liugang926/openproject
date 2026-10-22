@@ -93,6 +93,7 @@ export default class AutoThemeSwitcher extends Controller {
     this.applySystemTheme();
   }
 
+  // Mirrors the inline theme bootstrap in layouts/_theme_bootstrap; both must stamp the same attributes.
   private applySystemTheme():void {
     const colorMode = window.OpenProject.theme.detectSystemColorMode();
     const prefersSystemHighContrast = window.OpenProject.theme.prefersSystemHighContrast();
