@@ -39,6 +39,16 @@ RSpec.describe "OS-synced theme on first paint", :js do
     )
   end
 
+  def without_external_scripts
+    browser = page.driver.browser
+    browser.network.intercept(resource_type: "Script")
+    handler = browser.on(:request) { |request, *| request.abort }
+    yield
+  ensure
+    browser.page.off(:request, handler)
+    browser.page.command("Fetch.disable")
+  end
+
   it "resolves a dark OS to the dark theme on the login page" do
     User.anonymous.pref.update!(settings: { "theme" => "sync_with_os" })
     emulate_media(prefers_color_scheme: "dark")
@@ -57,12 +67,15 @@ RSpec.describe "OS-synced theme on first paint", :js do
     expect(page).to have_css("body[data-color-mode='dark'][data-dark-theme='dark_high_contrast']")
   end
 
-  it "honours the forced dark contrast preference without an OS contrast request" do
+  it "applies the forced dark contrast preference from the inline script alone" do
     user.pref.update!(settings: user.pref.settings.merge("force_dark_theme_contrast" => true))
     login_as user
     emulate_media(prefers_color_scheme: "dark")
-    visit home_path
 
-    expect(page).to have_css("body[data-color-mode='dark'][data-dark-theme='dark_high_contrast']")
+    without_external_scripts do
+      visit home_path
+
+      expect(page).to have_css("body[data-color-mode='dark'][data-dark-theme='dark_high_contrast']")
+    end
   end
 end
