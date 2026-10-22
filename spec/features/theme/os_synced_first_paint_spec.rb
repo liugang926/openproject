@@ -43,10 +43,13 @@ RSpec.describe "OS-synced theme on first paint", :js do
     browser = page.driver.browser
     browser.network.intercept(resource_type: "Script")
     handler = browser.on(:request) { |request, *| request.abort }
-    yield
-  ensure
-    browser.page.off(:request, handler)
-    browser.page.command("Fetch.disable")
+
+    begin
+      yield
+    ensure
+      browser.page.off(:request, handler)
+      browser.page.command("Fetch.disable")
+    end
   end
 
   it "resolves a dark OS to the dark theme on the login page" do
