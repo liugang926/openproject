@@ -76,4 +76,22 @@ RSpec.describe "Theme bootstrap script", type: :rails_request do
       expect(page).to have_css("body[data-color-mode='dark']")
     end
   end
+
+  context "on the meeting presentation layout for a user with the sync with OS theme" do
+    let(:project) { create(:project, enabled_module_names: %w[meetings]) }
+    let(:presenter) { create(:user, member_with_permissions: { project => %i[view_meetings] }) }
+    let(:meeting) { create(:meeting, project:, state: :in_progress) }
+
+    before do
+      create(:meeting_agenda_item, meeting:)
+      presenter.pref.update!(settings: presenter.pref.settings.merge("theme" => "sync_with_os"))
+      login_as presenter
+    end
+
+    it "inlines the script" do
+      get project_meeting_presentation_path(project, meeting)
+
+      expect(page).to have_css("body > script", text: "prefers-color-scheme", visible: :all)
+    end
+  end
 end
